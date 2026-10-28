@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Tristan Taylor, aerospace engineering student: SkEye-1 tiltrotor UAV, rocket thrust stand, Icarus TVC rocket.">
+<title>Tristan Taylor · Aerospace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* Layout: a flight-test logbook. Hero = live 3D SkEye-1 cycling hover to cruise; then one long project file per build, each with a spec strip, what-I-did, results and status; about and contact at the end */
+:root{
+  --bg:#eef1f4; --surface:#f8fafb; --ink:#111820; --muted:#566370; --line:#cdd5dc;
+  --accent:#d9561f; --accent-ink:#9a3a10; --sky:#dde3e9; --ok:#2c7a4b; --ok-bg:#e1f0e6; --wip:#8a5a00; --wip-bg:#f7ecd2;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171c; --surface:#1a2027; --ink:#e7ebef; --muted:#97a3ae; --line:#2b333b;
+  --accent:#f0783f; --accent-ink:#ffb38c; --sky:#2a3139; --ok:#7fd3a0; --ok-bg:#173225; --wip:#f2c46b; --wip-bg:#38290d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171c; --surface:#1a2027; --ink:#e7ebef; --muted:#97a3ae; --line:#2b333b;
+  --accent:#f0783f; --accent-ink:#ffb38c; --sky:#2a3139; --ok:#7fd3a0; --ok-bg:#173225; --wip:#f2c46b; --wip-bg:#38290d; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+.wrap{max-width:1100px;margin:0 auto}
+a{color:var(--accent-ink)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+nav{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 20px;padding-block:18px;border-bottom:1px solid var(--line)}
+.mark{font-family:var(--f-display);font-weight:600;font-size:22px;letter-spacing:.02em;text-decoration:none;color:var(--ink)}
+nav ul{display:flex;flex-wrap:wrap;gap:4px 18px;list-style:none;margin:0;padding:0;font-family:var(--f-mono);font-size:13px}
+nav a{color:var(--muted);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.hero{display:grid;grid-template-columns:minmax(0,0.95fr) minmax(0,1.25fr);gap:28px;align-items:center;padding-block:40px 28px}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr)}}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(48px,8vw,84px);line-height:.92;letter-spacing:-.005em;margin:10px 0 16px;text-wrap:balance}
+.lede{font-size:18px;max-width:46ch;margin:0 0 20px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font-family:var(--f-mono);font-size:13px;letter-spacing:.03em;padding:9px 14px;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{border-color:var(--muted)}
+.viewer{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:6px;overflow:hidden;background:var(--sky);border:1px solid var(--line)}
+.viewer canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+.vtag{position:absolute;left:12px;bottom:10px;font-family:var(--f-mono);font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:3px 8px}
+.vhint{position:absolute;right:12px;top:10px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.vfall{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted);font-family:var(--f-mono);font-size:13px}
+section.proj{border-top:1px solid var(--line);padding-block:36px 8px}
+.ph{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 18px}
+h2{font-family:var(--f-display);font-weight:600;font-size:clamp(32px,5vw,46px);line-height:1;margin:0;text-wrap:balance}
+h3{font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+.role{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 9px;border-radius:12px;white-space:nowrap}
+.ok{color:var(--ok);background:var(--ok-bg)} .wip{color:var(--wip);background:var(--wip-bg)}
+.sub{font-size:18px;max-width:62ch;margin:10px 0 0}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:22px}
+.specs div{background:var(--surface);padding:12px 14px}
+.specs .v{font-family:var(--f-display);font-weight:600;font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums}
+.specs .k{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);letter-spacing:.03em}
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:8px 40px}
+@media (max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+ul.did{margin:0;padding-left:18px;max-width:65ch}
+ul.did li{margin:0 0 8px}
+.results{display:grid;gap:10px}
+.res{border-left:3px solid var(--accent);padding:2px 0 2px 12px;border-radius:0}
+.res b{font-family:var(--f-display);font-weight:600;font-size:24px;display:block;line-height:1.1}
+.res span{font-size:14px;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.steps .when{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.steps .what{font-weight:500;margin:2px 0 6px}
+.steps p{margin:0;font-size:14px;color:var(--muted)}
+.how{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-top:22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:700px){.how{grid-template-columns:minmax(0,1fr)}}
+.how p{margin:0 0 8px;max-width:60ch;font-size:15px}
+.how svg{width:100%;height:auto;max-width:100%}
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 40px}
+@media (max-width:760px){.about{grid-template-columns:minmax(0,1fr)}}
+dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:0}
+dt{font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-top:3px}
+dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:36px;padding-top:18px;font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+.copy-ok{font-family:var(--f-mono);font-size:12px;color:var(--ok);align-self:center}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav aria-label="Sections">
+  <a class="mark" href="#top">Tristan Taylor</a>
+  <ul><li><a href="#skeye">SkEye-1</a></li><li><a href="#stand">Thrust stand</a></li><li><a href="#icarus">Icarus</a></li><li><a href="#next">Next</a></li><li><a href="#about">About</a></li></ul>
+</nav>
+
+<header class="hero" id="top">
+  <div>
+    <div class="eyebrow">Aerospace engineering student · Boston, MA</div>
+    <h1>I design, build and test things that fly.</h1>
+    <p class="lede">Flight controls and propulsion. Right now that means a tiltrotor mapping UAV with its own PX4 flight control, rocket thrust-measurement stands, and a thrust-vector-controlled landing rocket.</p>
+    <div class="cta">
+      <a class="btn primary" href="#skeye">See SkEye-1</a>
+      <a class="btn" href="https://www.linkedin.com/in/tristan-taylor-aero" target="_blank" rel="noopener">LinkedIn</a>
+      <button class="btn" id="copyMail" type="button">Copy email</button>
+      <span class="copy-ok" id="copied" aria-live="polite"></span>
+    </div>
+  </div>
+  <div class="viewer" id="viewer" aria-label="3D model of SkEye-1 tilting its rotors from hover to cruise">
+    <span class="vhint">Drag to look around</span>
+    <span class="vtag" id="vtag">Hover · rotors up</span>
+    <div class="vfall" id="vfall">3D view unavailable in this browser.</div>
+  </div>
+</header>
+
+<section class="proj" id="skeye">
+  <div class="ph"><h2>SkEye-1</h2><span class="pill wip">Phase 1 hover rig: build starts Nov 2026</span></div>
+  <div class="role">Autonomous VTOL tiltrotor mapping UAV · designer and builder · 2026 – present</div>
+  <p class="sub">A twin wingtip tiltrotor that takes off like a helicopter, tilts its rotors forward to fly like a plane, and maps large areas with a camera. The rotors use swashplate cyclic pitch, like a helicopter's, to control the aircraft in hover.</p>
+  <div class="specs">
+    <div><div class="v">2.0 m</div><div class="k">Wing span, SD7062</div></div>
+    <div><div class="v">4.95 kg</div><div class="k">Design mass</div></div>
+    <div><div class="v">0.74 m</div><div class="k">Rotors, hingeless heads</div></div>
+    <div><div class="v">2,300 rpm</div><div class="k">Hover, rpm-governed</div></div>
+    <div><div class="v">−15° to 95°</div><div class="k">Nacelle tilt range</div></div>
+    <div><div class="v">13.5 m/s</div><div class="k">Stall speed</div></div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>What I did</h3>
+      <ul class="did">
+        <li>Chose the configuration from simulation trade studies: tilt-only control couldn't hold a hover, so each rotor got a swashplate for cyclic pitch.</li>
+        <li>Developed custom PX4 flight-control modules in C++: a per-servo CCPM mixer with rate feed-forward, an rpm governor using bidirectional DShot telemetry, and a hover-to-cruise transition manager, each checked against a Python reference model.</li>
+        <li>Built an automated failsafe test matrix in SITL covering RC and datalink loss, low battery, geofence, GPS loss, mode switches and module failure at hover, mid-transition and cruise.</li>
+        <li>Modeled the rotor pods in parametric Python CAD with automated clash checks across the full tilt range, and sized the wing and tail (tail volume 0.40, twin-fin H-tail).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Results so far (simulation)</h3>
+      <div class="results">
+        <div class="res"><b>3 of 3</b><span>full autonomous missions (~3 km: takeoff, transition, survey, landing) in PX4 + Gazebo</span></div>
+        <div class="res"><b>0.43 m</b><span>worst altitude error across those missions</span></div>
+        <div class="res"><b>6 of 6</b><span>module-failure recovery cases pass after fixing a control hand-over integrator wind-up</span></div>
+        <div class="res"><b>45 ms</b><span>kill switch to motor cut in the ground test; rotors below 100 rpm in 0.3 s</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="how">
+    <div>
+      <h3 style="margin-top:0">How it holds a hover</h3>
+      <p>A swashplate tilts under each rotor, so every blade's pitch rises and falls once per turn. That tilts the rotor's thrust without changing its speed, which is far faster than speeding up or slowing down a 0.74 m rotor.</p>
+      <p>Both rotors tilting forward pitches the nose. One forward and one back yaws it. Different collective on each side rolls it.</p>
+    </div>
+    <svg viewBox="0 0 320 170" role="img" aria-labelledby="cyc-t">
+      <title id="cyc-t">Rotor with blade pitch varying around the disc, thrust tilted forward</title>
+      <ellipse cx="160" cy="70" rx="130" ry="34" fill="none" stroke="var(--line)" stroke-width="10"/>
+      <path d="M30 70 A130 34 0 0 1 290 70" fill="none" stroke="var(--accent)" stroke-width="10" stroke-opacity=".85"/>
+      <line x1="160" y1="70" x2="160" y2="150" stroke="var(--muted)" stroke-width="4" stroke-linecap="round"/>
+      <rect x="132" y="118" width="56" height="9" rx="2" fill="var(--muted)" transform="rotate(-8 160 122)"/>
+      <line x1="160" y1="70" x2="198" y2="14" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M190 14 L200 11 L198 22" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="206" y="18" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">thrust</text>
+      <text x="8" y="112" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">more pitch</text>
+      <text x="236" y="112" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">swashplate</text>
+    </svg>
+  </div>
+  <h3>Roadmap</h3>
+  <ol class="steps">
+    <li><div class="when">Done</div><div class="what">Simulation and flight software</div><p>Mixer, governor, transition, failsafes and bench tools, all tested in SITL.</p></li>
+    <li><div class="when">Nov – Dec 2026</div><div class="what">Phase 1 hover rig</div><p>One rotor pod on a strapped-down rig: governor tuning, cyclic response, then tethered hover.</p></li>
+    <li><div class="when">Jan – Feb 2027</div><div class="what">Phase 2 aircraft</div><p>Full airframe, hover, then step-by-step transitions to wing-borne flight.</p></li>
+    <li><div class="when">2027</div><div class="what">Mapping payload</div><p>Survey planning, geotagged photos and stitched orthomosaic maps.</p></li>
+  </ol>
+</section>
+
+<section class="proj" id="stand">
+  <div class="ph"><h2>Rocket motor thrust stand</h2><span class="pill ok">Built and tested</span></div>
+  <div class="role">Test equipment and data acquisition · designer and builder · 2026</div>
+  <p class="sub">A static stand that measures a rocket motor's thrust over time, so a motor's real performance can be checked against its rating.</p>
+  <div class="specs">
+    <div><div class="v">20 kg</div><div class="k">Load cell, HX711 amplifier</div></div>
+    <div><div class="v">80 Hz</div><div class="k">Logging rate, ESP32</div></div>
+    <div><div class="v">3</div><div class="k">Motor types tested</div></div>
+    <div><div class="v">−1.8% / +4.1%</div><div class="k">Repeat G80 tests vs. rated impulse</div></div>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>What I did</h3>
+      <ul class="did">
+        <li>Designed and built the stand around a 20 kg load cell, an HX711 amplifier and an ESP32 logging at 80 Hz (C++, Arduino framework).</li>
+        <li>Calibrated the load cell, wrote a repeatable test procedure, and fired the Estes C6, AeroTech G80-7T and AeroTech G125-14A.</li>
+        <li>Integrated the thrust curves in Python and MATLAB to get total impulse, and checked the result by hand.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Next version</h3>
+      <ul class="did">
+        <li>A second stand with three load cells under a floating plate, to measure the side forces of a gimbaled motor for Icarus. CAD complete.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="proj" id="icarus">
+  <div class="ph"><h2>Icarus</h2><span class="pill wip">Parts on order</span></div>
+  <div class="role">Thrust-vector-controlled landing rocket · designer · 2026 – present</div>
+  <p class="sub">A finless, two-stage rocket that steers by gimbaling its motors and lands itself propulsively, with no parachute. Target apogee 450–500 m.</p>
+  <div class="cols">
+    <div>
+      <h3>Design</h3>
+      <ul class="did">
+        <li>The lower stage carries the boost motor on its own gimbal and drops at burnout. The upper stage lands on a second gimbaled motor with fold-out legs.</li>
+        <li>An 88 g CO₂ cold-gas system controls roll and attitude for the whole flight. The flight computer aborts at 15° of attitude error.</li>
+        <li>Coordinated a safety-code review with NAR, a regional launch club and AeroTech for staging, air-start and powered landing. Now looking for a Tripoli launch site, since the club's code requires a recovery system.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Test program</h3>
+      <ol class="steps" style="grid-template-columns:minmax(0,1fr)">
+        <li><div class="what">Gimbal tests on the floating-plate stand</div><p>Measure gimbal response and side force before anything flies.</p></li>
+        <li><div class="what">Single-motor TVC ascent</div><p>Long-burn AeroTech I59 motor, so the controller has time to prove itself.</p></li>
+        <li><div class="what">Two-stage landing flights</div><p>38 mm AeroTech H100W and H125W motors.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="proj" id="next">
+  <div class="ph"><h2>Next: a methalox engine</h2><span class="pill wip">Design phase</span></div>
+  <p class="sub">A 1,000 lbf liquid-oxygen and methane rocket engine for static-fire testing, the same propellants as SpaceX's Raptor and Blue Origin's BE-4. Pressure-fed, with a heat-sink copper chamber for short first burns. Design and safety review first, then cold-flow tests, then hot fires.</p>
+</section>
+
+<section class="proj" id="about">
+  <div class="ph"><h2>About</h2></div>
+  <div class="about">
+    <p class="sub" style="margin-top:12px">I'm an engineering student at Bunker Hill Community College and MassBay, transferring into a B.S. in Aerospace Engineering in fall 2027. I'm aiming for propulsion or guidance, navigation and control, and long term, for space. I'm looking for a Summer 2027 aerospace or mechanical engineering internship, May 21 – August 27, and I'm willing to relocate.</p>
+    <dl style="margin-top:14px">
+      <dt>Education</dt><dd>A.S. Engineering (transfer), Bunker Hill CC · 4.0 GPA</dd>
+      <dt>Selected</dt><dd>NASA Community College Aerospace Scholars, Fall 2026</dd>
+      <dt>Member</dt><dd>National Association of Rocketry · NASA ORBIT Challenge team</dd>
+      <dt>Certified</dt><dd>FAA TRUST</dd>
+      <dt>Tools</dt><dd>Fusion 360, AutoCAD, PX4, Gazebo, QGroundControl, Python, MATLAB, ESP32, 3D printing</dd>
+      <dt>Contact</dt><dd><span id="mail">tristan.taylor016@gmail.com</span> · <a href="https://www.linkedin.com/in/tristan-taylor-aero" target="_blank" rel="noopener">LinkedIn</a></dd>
+    </dl>
+  </div>
+</section>
+
+<footer><span>Tristan Taylor · Boston, MA</span><span>Updated October 2026</span></footer>
+</div>
+
+<script>
+document.getElementById('copyMail').addEventListener('click', () => {
+  const t = 'tristan.taylor016@gmail.com', o = document.getElementById('copied');
+  const done = m => { o.textContent = m; setTimeout(() => o.textContent = '', 2500); };
+  try { navigator.clipboard.writeText(t).then(() => done('Copied'), () => done(t)); } catch (e) { done(t); }
+});
+</script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const host = document.getElementById('viewer');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ antialias: true }); }
+catch (e) { document.getElementById('vfall').style.display = 'flex'; throw e; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+host.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, 4/3, 0.02, 60);
+camera.position.set(2.3, 1.2, 2.2);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.enableZoom = false; controls.enablePan = false;
+controls.target.set(0, 0.05, -0.12);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.6;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f94, 1.3));
+const sun = new THREE.DirectionalLight(0xffffff, 2.3); sun.position.set(2.5, 4, 2); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left:-2, right:2, top:2, bottom:-2, near:0.5, far:10 });
+scene.add(sun);
+const rim = new THREE.DirectionalLight(0xdfe8ff, 1.0); rim.position.set(-3, 2, -3); scene.add(rim);
+const groundMat = new THREE.MeshStandardMaterial({ color: 0xe2e6ea, roughness: 1 });
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), groundMat);
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(16, 64, 0xb6bec6, 0xb6bec6); grid.material.transparent = true; grid.material.opacity = 0.5; scene.add(grid);
+function themeColors(){
+  scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--sky').trim());
+  const dark = scene.background.getHSL({}).l < 0.3;
+  grid.material.color.set(dark ? 0x46505a : 0xb6bec6); groundMat.color.set(dark ? 0x30373f : 0xe2e6ea);
+}
+themeColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeColors);
+new MutationObserver(themeColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+const M = {
+  skin: new THREE.MeshStandardMaterial({ color: 0x1b1d20, roughness: 0.9, side: THREE.DoubleSide }),
+  carbon: new THREE.MeshStandardMaterial({ color: 0x24292e, roughness: 0.38, metalness: 0.25 }),
+  alu: new THREE.MeshStandardMaterial({ color: 0xc4cad0, roughness: 0.3, metalness: 0.85 }),
+  blade: new THREE.MeshStandardMaterial({ color: 0x101214, roughness: 0.3, metalness: 0.2 }),
+  glass: new THREE.MeshStandardMaterial({ color: 0x0d1a24, roughness: 0.1, metalness: 0.6 }),
+};
+function airfoil(t, m, p, u){
+  const yt = 5*t*(0.2969*Math.sqrt(u) - 0.126*u - 0.3516*u*u + 0.2843*u**3 - 0.1036*u**4);
+  const yc = m === 0 ? 0 : (u < p ? m/(p*p)*(2*p*u - u*u) : m/((1-p)**2)*((1-2*p) + 2*p*u - u*u));
+  return [yc + yt, yc - yt];
+}
+function loft(sections, { t=0.14, m=0.035, p=0.4, n=28 } = {}){
+  const us = []; for (let i=0;i<=n;i++){ const s=i/n; us.push(0.5-0.5*Math.cos(Math.PI*s)); }
+  const ring = []; us.slice().reverse().forEach(u => ring.push([u,0])); us.slice(1).forEach(u => ring.push([u,1]));
+  const pos = [], idx = [];
+  sections.forEach(S => ring.forEach(([u, side]) => { const [yu, yl] = airfoil(t, m, p, Math.max(u,1e-4)); const th = side === 0 ? yu : yl;
+    const P = S.o.clone().addScaledVector(S.c, u*S.len).addScaledVector(S.n, th*S.len); pos.push(P.x, P.y, P.z); }));
+  const R = ring.length;
+  for (let s=0;s<sections.length-1;s++) for (let i=0;i<R-1;i++){ const a=s*R+i, b=a+1, c=a+R, d=c+1; idx.push(a,c,b, b,c,d); }
+  [0, sections.length-1].forEach(s => { for (let i=1;i<R-1;i++) idx.push(s*R, s*R+i, s*R+i+1); });
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+const V = (x,y,z) => new THREE.Vector3(x,y,z);
+const add = (parent, geo, mat, x=0, y=0, z=0) => { const o = new THREE.Mesh(geo, mat); o.position.set(x,y,z); o.castShadow = true; o.receiveShadow = true; parent.add(o); return o; };
+
+const plane = new THREE.Group(); scene.add(plane);
+const WY = 0.065;
+const chord = x => 0.25 - 0.08*Math.abs(x);
+const wingSec = x => ({ o: V(x, WY, 0.36*chord(x)), c: V(0,0,-1), n: V(0,1,0), len: chord(x) });
+add(plane, loft([wingSec(-1), wingSec(0), wingSec(1)]), M.skin);
+const prof = []; const L = 0.6, zN = 0.36, zT = zN - L;
+for (let i=0;i<=56;i++){ const s=i/56; let f;
+  if (s > 0.62){ const q=(s-0.62)/0.38; f = Math.pow(Math.max(0, 1-Math.pow(q,2.5)), 1.6/2.5); }
+  else if (s < 0.42){ const q=s/0.42; f = 0.08 + 0.92*Math.pow(Math.sin(q*Math.PI/2), 0.9); } else f = 1;
+  prof.push(new THREE.Vector2(Math.max(0.064*f, 0.004), zT + L*s)); }
+const fg = new THREE.LatheGeometry(prof, 48); fg.rotateX(Math.PI/2);
+const cy = WY + 0.004 - 0.064;
+add(plane, fg, M.skin, 0, cy, 0);
+add(plane, new THREE.CylinderGeometry(0.018,0.018,0.012,24), M.glass, 0, cy - 0.061, 0.05);
+const boomY = cy + 0.004;
+add(plane, new THREE.CylinderGeometry(0.008,0.008,0.5,16).rotateX(Math.PI/2), M.carbon, 0, boomY, -0.44);
+const HC = 0.142, HS = 0.21, inc = -2.3*Math.PI/180, HZ = -0.6;
+const ht = x => ({ o: V(x, boomY + 0.25*HC*Math.sin(inc), HZ + 0.25*HC), c: V(0, Math.sin(inc), -Math.cos(inc)), n: V(0, Math.cos(inc), Math.sin(inc)), len: HC });
+add(plane, loft([ht(-HS), ht(HS)], { t:0.09, m:0 }), M.skin);
+const kV = Math.sqrt(0.55), VH = 0.2*kV, VC0 = 0.2*kV, VC1 = 0.15*kV, sw = Math.tan(20*Math.PI/180)*VH, fLE = HZ + 0.25*HC + 0.03*kV, y0 = boomY - 0.35*VH;
+[-HS, HS].forEach(x => add(plane, loft([{ o:V(x,y0,fLE), c:V(0,0,-1), n:V(1,0,0), len:VC0 }, { o:V(x,y0+VH,fLE-sw), c:V(0,0,-1), n:V(1,0,0), len:VC1 }], { t:0.09, m:0 }), M.skin));
+const belly = cy - 0.064, GY = belly - 0.12;
+ground.position.y = GY; grid.position.y = GY + 0.001;
+const gear = []; let gearPos = 0; const hip = belly + 0.014;
+[[-0.035, 0.06, 1], [0.035, 0.06, 1], [0, -0.08, -1]].forEach(([x, z, d]) => {
+  const g = new THREE.Group(); g.position.set(x, hip, z); plane.add(g); gear.push({ g, d });
+  const len = hip - GY - 0.006;
+  add(g, new THREE.CylinderGeometry(0.0045,0.0045,len,10), M.carbon, 0, -len/2, 0);
+  add(g, new THREE.CylinderGeometry(0.012,0.012,0.006,16), M.carbon, 0, -len-0.003, 0); });
+
+const pods = [];
+[-1,1].forEach(s => {
+  add(plane, new THREE.CylinderGeometry(0.017,0.017,0.065,24).rotateZ(Math.PI/2), M.skin, s*0.995, WY, 0);
+  const piv = new THREE.Group(); piv.position.set(s*1.0, WY, 0); plane.add(piv);
+  const X = s*0.092;
+  const cp = [[0.004,-0.084],[0.03,-0.078],[0.055,-0.062],[0.069,-0.04],[0.072,-0.01],[0.072,0.07],[0.066,0.098],[0.05,0.114],[0.03,0.12]].map(([r,y]) => new THREE.Vector2(r,y));
+  add(piv, new THREE.LatheGeometry(cp, 48), M.skin, X, 0, 0);
+  add(piv, new THREE.BoxGeometry(0.05,0.03,0.04), M.skin, s*0.035, 0, 0);
+  add(piv, new THREE.CylinderGeometry(0.003,0.003,0.07,10), M.alu, X, 0.15, 0);
+  add(piv, new THREE.CylinderGeometry(0.022,0.022,0.006,32), M.alu, X, 0.128, 0);
+  const rot = new THREE.Group(); rot.position.set(X, 0, 0); piv.add(rot);
+  add(rot, new THREE.CylinderGeometry(0.019,0.019,0.005,32), M.alu, 0, 0.135, 0);
+  add(rot, new THREE.BoxGeometry(0.03,0.016,0.018), M.alu, 0, 0.173, 0);
+  [1,-1].forEach(d => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.325,0.004,0.032), M.blade); b.castShadow = true;
+    const bg = new THREE.Group(); bg.position.set(d*(0.0455+0.1625), 0.175, 0); bg.rotation.x = d*s*0.19; bg.add(b); rot.add(bg);
+    add(rot, new THREE.BoxGeometry(0.03,0.014,0.016), M.alu, d*0.038, 0.173, 0); });
+  const disc = new THREE.Mesh(new THREE.RingGeometry(0.05, 0.37, 64), new THREE.MeshBasicMaterial({ color: 0x101214, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false }));
+  disc.rotation.x = -Math.PI/2; disc.position.y = 0.175; rot.add(disc);
+  pods.push({ piv, rot, s });
+});
+
+function resize(){ const w = host.clientWidth, h = host.clientHeight; renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(host); resize();
+const tag = document.getElementById('vtag');
+const clock = new THREE.Clock(); let t0 = 0, ang = 0, last = '';
+function frame(){
+  const dt = Math.min(clock.getDelta(), 0.05); t0 += dt;
+  const T = 16, ph = (t0 % T)/T;
+  let tilt = ph < 0.2 ? 0 : ph < 0.4 ? (ph-0.2)/0.2*90 : ph < 0.7 ? 90 : ph < 0.9 ? 90 - (ph-0.7)/0.2*90 : 0;
+  tilt = 45 - 45*Math.cos(tilt/90*Math.PI);
+  if (reduce) tilt = 0;
+  const lift = Math.min(1, tilt/60)*0.5;
+  ground.position.y = GY - lift; grid.position.y = GY - lift + 0.001;
+  pods.forEach(p => p.piv.rotation.x = tilt*Math.PI/180);
+  const goal = tilt > 55 ? 1 : tilt < 30 ? 0 : gearPos;
+  gearPos += Math.sign(goal - gearPos)*Math.min(Math.abs(goal - gearPos), dt*0.9);
+  gear.forEach(o => o.g.rotation.x = o.d*gearPos*Math.PI/2);
+  ang += dt*(reduce ? 0 : 24);
+  pods.forEach(p => p.rot.rotation.y = p.s*ang);
+  const label = tilt < 8 ? 'Hover · rotors up' : tilt > 82 ? 'Cruise · rotors forward, legs tucked' : 'Transition · nacelles tilting';
+  if (label !== last){ tag.textContent = label; last = label; }
+  controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame);
+}
+frame();
+</script>
+
+</body>
+</html>
